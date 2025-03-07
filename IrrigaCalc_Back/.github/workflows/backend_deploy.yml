@@ -1,0 +1,29 @@
+name: Deploy Backend to Railway
+
+on:
+  push:
+    branches:
+      - master  # ou a branch que você usa para deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Instalar Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependências
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Deploy para Railway
+        run: curl -X POST "https://api.railway.app/v1/projects/YOUR_PROJECT_ID/deploy" \
+             -H "Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}"
